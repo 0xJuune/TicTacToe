@@ -17,22 +17,27 @@ const Player = (symbol, playerType, currentPlayer) => {
     }
 }
 
-//   const gameLogic = (() => {
-//     const vv = 's';
-//     return {
-//         vv,
-//     };
-//   })();
+const pageFunc = (() => {
+    const butt = document.getElementById('reset')
+    
+
+    butt.addEventListener('click', () => {
+        gameBoard.resetGameBoard();
+    })
+
+
+    return {
+        
+    };
+})();
 
 const gameBoard = (() => {
     let board = new Array(9).fill('');
     const cell = document.querySelectorAll('.cell');
 
-    // should probably replace this with player.currentplayer or something weird
-    // let currentPlayerSign = 'X' 
-
     const playerX = Player('X', 'player', true);
     const playerO = Player('O', 'Easy', false);
+    let gameOverStatus = false;
     
     const swapPlayer = (a) => {
         switch(a) {
@@ -82,23 +87,48 @@ const gameBoard = (() => {
             let b = board[winPattern[1]];
             let c = board[winPattern[2]];
             if (a === '' || b === '' || c === '') {
+                gameOverStatus = false;
                 continue;
             }
             else if (a === b && b === c) {
                 currentPlayer().addScore()
                 console.log(`Player ${currentPlayer().getSymbol()} Wins! Current Score: ${currentPlayer().getScore()}`)
-                return true
-                // break;
+                gameOverStatus = true;
+                break;
             }
+            // else if (a != '' && b != '' && c != '') {
+            //     gameOverStatus = true;
+            //     console.log('tie! you both suck')
+            // }
         }
     }
 
-    cell.forEach((position) => {
-        position.addEventListener('click', () => {
-            if (claimCell(position)) {
+    const resetGameBoard = () => {
+        console.log('reset')
+        gameOverStatus = false;
+        board.fill('');
+        playerX.updateCurrentPlayer(true);
+        playerO.updateCurrentPlayer(false);
+        cell.forEach((element) => {
+            element.textContent = '';
+        })
+    }
+
+    const roundOver = (element) => {
+        if (!gameOverStatus) {
+            if (claimCell(element)) {
             checkWin();
             swapPlayer(currentPlayer());
-        }
+        }}
+        else {
+            // resetGameBoard();
+        };
+    }
+
+    cell.forEach((element) => {
+        element.addEventListener('click', () => {
+            console.log(gameOverStatus);
+            roundOver(element);
         }) 
     }); 
 
@@ -106,6 +136,7 @@ const gameBoard = (() => {
         swapPlayer,
         checkWin,
         claimCell,
+        resetGameBoard,
         currentPlayer,
         swapPlayer
     };
