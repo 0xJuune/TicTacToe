@@ -19,6 +19,9 @@ const Player = (symbol, playerType, currentPlayer) => {
 
 const pageFunc = (() => {
     const butt = document.getElementById('reset')
+    const boardContainer = document.querySelector('.gameBoard')
+    const leftScore = document.getElementById('leftScore')
+    const rightScore = document.getElementById('rightScore')
     
 
     const highlightWin = (a, b, c) => {
@@ -27,23 +30,37 @@ const pageFunc = (() => {
         document.getElementById(c).style.color = "green";
     }
 
+    const appendScore = () => {
+        leftScore.textContent = `${gameBoard.getPlayer('x').getSymbol()}'s Score: ${gameBoard.getPlayer('x').getScore()}`
+        rightScore.textContent = `${gameBoard.getPlayer('o').getSymbol()}'s Score: ${gameBoard.getPlayer('o').getScore()}`
+    }
+    
+    boardContainer.addEventListener('click', () => {
+        appendScore();
+    }, {once : true});
+
     butt.addEventListener('click', () => {
         gameBoard.resetGameBoard();
     })
 
     return {
         highlightWin,
+        appendScore,
     };
 })();
 
 const gameBoard = (() => {
     let board = new Array(9).fill('');
     const cell = document.querySelectorAll('.cell');
-
     const playerX = Player('X', 'player', true);
     const playerO = Player('O', 'Easy', false);
     let gameOverStatus = false;
     
+
+    const getPlayer = (a) => {
+       return a === 'x' ? playerX : playerO;
+    }
+
     const swapPlayer = (a) => {
         switch(a) {
             case playerX:
@@ -75,7 +92,6 @@ const gameBoard = (() => {
         }
     }
 
-
     const checkWin = () => {
         const winningMoves = 
             [[0, 1, 2],
@@ -98,6 +114,7 @@ const gameBoard = (() => {
             }
             else if (a === b && b === c) {
                 currentPlayer().addScore()
+                pageFunc.appendScore()
                 console.log(`Player ${currentPlayer().getSymbol()} Wins! Current Score: ${currentPlayer().getScore()}`)
                 gameOverStatus = true;
                 pageFunc.highlightWin(winPattern[0], winPattern[1], winPattern[2]);
@@ -135,7 +152,6 @@ const gameBoard = (() => {
 
     cell.forEach((element) => {
         element.addEventListener('click', () => {
-            // console.log(gameOverStatus);
             roundOver(element);
         }) 
     }); 
@@ -146,29 +162,7 @@ const gameBoard = (() => {
         claimCell,
         resetGameBoard,
         currentPlayer,
-        swapPlayer
+        swapPlayer,
+        getPlayer,
     };
   })();
-
-// const Player = (symbol, playerType, currentPlayer) => {
-//     let score = 0;
-//     const getSymbol = () => symbol;
-//     const getScore = () => score;
-//     const addScore = () => score++;
-
-//     return {
-//         // playerType,
-//         // currentPlayer,
-//         getSymbol,
-//         getScore,
-//         addScore
-//     }
-// }
-
-//   const v = (() => {
-//     const vv =  ;
-//     return {
-//         vv,
-//     };
-//   })();
-  
