@@ -21,13 +21,18 @@ const pageFunc = (() => {
     const butt = document.getElementById('reset')
     
 
+    const highlightWin = (a, b, c) => {
+        document.getElementById(a).style.color = "green";
+        document.getElementById(b).style.color = "green";
+        document.getElementById(c).style.color = "green";
+    }
+
     butt.addEventListener('click', () => {
         gameBoard.resetGameBoard();
     })
 
-
     return {
-        
+        highlightWin,
     };
 })();
 
@@ -70,6 +75,7 @@ const gameBoard = (() => {
         }
     }
 
+
     const checkWin = () => {
         const winningMoves = 
             [[0, 1, 2],
@@ -94,6 +100,7 @@ const gameBoard = (() => {
                 currentPlayer().addScore()
                 console.log(`Player ${currentPlayer().getSymbol()} Wins! Current Score: ${currentPlayer().getScore()}`)
                 gameOverStatus = true;
+                pageFunc.highlightWin(winPattern[0], winPattern[1], winPattern[2]);
                 break;
             }
             // else if (a != '' && b != '' && c != '') {
@@ -111,6 +118,7 @@ const gameBoard = (() => {
         playerO.updateCurrentPlayer(false);
         cell.forEach((element) => {
             element.textContent = '';
+            element.style.color = "black";
         })
     }
 
@@ -127,7 +135,7 @@ const gameBoard = (() => {
 
     cell.forEach((element) => {
         element.addEventListener('click', () => {
-            console.log(gameOverStatus);
+            // console.log(gameOverStatus);
             roundOver(element);
         }) 
     }); 
